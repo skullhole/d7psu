@@ -1,0 +1,15 @@
+{
+  "name": "rxml",
+  "version": "1.0.0",
+  "description": "Release XML Builder for Drupal 7",
+  "main": "README.txt",
+  "devDependencies": {
+    "fetch": "^1.1.0",
+    "gulp": "^3.9.1",
+    "xml": "^1.0.1"
+  },
+  "scripts": {},
+  "author": "Dyachenko Oleg <dyachenko.oleg@gmail.com> (http://blog.odyachenko.work)",
+  "license": "ISC",
+  "dependencies": {}
+}

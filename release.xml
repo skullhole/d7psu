@@ -1,0 +1,27 @@
+<project xmlns:dc="http://purl.org/dc/elements/1.1/">
+    <title>skullhole/d7psu</title>
+    <short_name>d7psu</short_name>
+    <dc:creator>skullhole</dc:creator>
+    <type>project_module</type>
+    <api_version>7.x</api_version>
+    <recommended_major>1</recommended_major>
+    <supported_majors>1</supported_majors>
+    <default_major>1</default_major>
+    <project_status>published</project_status>
+    <terms>
+        <term>
+            <name>Projects</name>
+            <value>Modules</value>
+        </term>
+        <term>
+            <name>Maintenance status</name>
+            <value>Actively maintained</value>
+        </term>
+        <term>
+            <name>Development status</name>
+            <value>Under active development</value>
+        </term>
+    </terms>
+    <releases>
+    </releases>
+</project>
