@@ -6,7 +6,8 @@
   "devDependencies": {
     "fetch": "^1.1.0",
     "gulp": "^3.9.1",
-    "xml": "^1.0.1"
+    "xml": "^1.0.1",
+    "yargs": "^6.4.0"
   },
   "scripts": {},
   "author": "Dyachenko Oleg <dyachenko.oleg@gmail.com> (http://blog.odyachenko.work)",
