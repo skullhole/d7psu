@@ -73,7 +73,7 @@ function rxml(config) {
             release.push({'version_patch': match[2]});
             release.push({'status': 'published'});
             release.push({'release_link': release_github.html_url});
-            release.push({'download_link': rxml_replace(release_github.tarball_url + "?access_token=%ATOK%", config)};
+            release.push({'download_link': rxml_replace(release_github.tarball_url + "?access_token=%ATOK%", config)});
             release.push({'date': date});
             // release.push({ 'mdhash' : '' });
             // release.push({ 'filesize' : '' });
