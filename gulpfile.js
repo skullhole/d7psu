@@ -34,6 +34,13 @@ function rxml(config) {
     }
     else {
       var content = JSON.parse(body.toString());
+
+      // Error.
+      if (!content || content.message) {
+        console.log('Error: ', content);
+        return;
+      }
+
       if (content) {
         // example
         // https://updates.drupal.org/release-history/xmlsitemap/7.x
