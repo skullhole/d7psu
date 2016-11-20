@@ -47,7 +47,7 @@ function rxml(config) {
 
         var major = '1';
 
-        var releases = [];
+        var releases = [], filepath, fileinfo;
         for (var index in content) {
           if (content.hasOwnProperty(index)) {
             var release_github = content[index],
@@ -82,23 +82,27 @@ function rxml(config) {
             var files = [];
 
             // ZIP.
+            filepath = rxml_replace(release_github.zipball_url + "?access_token=%ATOK%", config);
+            fileinfo = rxml_fileinfo(filepath);
             files.push({
               'file': [
-                {'url': rxml_replace(release_github.zipball_url + "?access_token=%ATOK%", config)},
+                {'url': filepath},
                 {'archive_type': 'zip'},
-                // { 'md5' : '' },
-                // { 'size' : '' },
+                {'md5': fileinfo.md5},
+                {'size': fileinfo.size},
                 {'filedate': date}
               ]
             });
 
             // TAR.GZ.
+            filepath = rxml_replace(release_github.tarball_url + "?access_token=%ATOK%", config);
+            fileinfo = rxml_fileinfo(filepath);
             files.push({
               'file': [
-                {'url': rxml_replace(release_github.tarball_url + "?access_token=%ATOK%", config)},
+                {'url': filepath},
                 {'archive_type': 'tar.gz'},
-                // { 'md5' : '' },
-                // { 'size' : '' },
+                {'md5': fileinfo.md5},
+                {'size': fileinfo.size},
                 {'filedate': date}
               ]
             });
@@ -153,7 +157,7 @@ function rxml(config) {
 
         var output = xml(project, true);
 
-        fs.writeFile('./release.xml', output, function(err) {
+        fs.writeFile('./release.xml', output, function (err) {
           if (err) {
             throw err;
           }
@@ -174,4 +178,17 @@ function rxml_replace(string, config) {
     .replace('%USER%', config.user)
     .replace('%REPO%', config.repo)
     .replace('%ATOK%', config.atok);
+}
+
+/**
+ * Retrieves the file and gets its md5 hash and filesize.
+ *
+ * @param filepath
+ */
+function rxml_fileinfo(filepath) {
+  var fileinfo = {md5: '', size: ''};
+
+  // TODO
+
+  return fileinfo;
 }
