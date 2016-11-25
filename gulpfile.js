@@ -5,17 +5,57 @@ var xml = require("xml");
 var argv = require("yargs").argv;
 
 gulp.task("default", function () {
-  fs.readFile("./repo.json", "utf-8", function (err, data) {
-    if (err) {
-      console.log(err);
-    }
-    else {
-      data = JSON.parse(data);
-      if (data) {
-        d7psu(data);
+  /**
+   * Extends object.
+   *
+   * @param obj
+   * @returns {*}
+   */
+  var extend = function (obj) {
+    var arg, i, k;
+    for (i = 1; i < arguments.length; i++) {
+      arg = arguments[i];
+      for (k in arg) {
+        if (arg.hasOwnProperty(k)) {
+          obj[k] = arg[k];
+        }
       }
     }
-  });
+    return obj;
+  };
+
+  // Default options.
+  var defaultConfig = {
+    "user": "",
+    "repo": "",
+    "atok": "",
+    "info": "1",
+    "path": ".",
+    "file": "release.xml",
+    "conf": "repo.json"
+  };
+  var config = extend({}, defaultConfig, argv);
+
+  // User & Repo are given then use console params.
+  if (config["user"] && config["repo"]) {
+    d7psu(config);
+  }
+
+  // Read configuration file.
+  else {
+    fs.readFile(config["path"] + "/" + config["conf"], "utf-8", function (err, data) {
+      if (err) {
+        console.log(err);
+      }
+      else {
+        data = JSON.parse(data);
+        if (data) {
+          data = extend({}, defaultConfig, data);
+          d7psu(data);
+        }
+      }
+    });
+  }
 
   return true;
 });
@@ -26,6 +66,8 @@ gulp.task("default", function () {
  * @param config
  */
 function d7psu(config) {
+  console.log(config);
+
   // Create release.xml file.
   // example: https://updates.drupal.org/release-history/block_token/7.x
   d7psuGithubAPI("https://api.github.com/repos/%USER%/%REPO%/releases?access_token=%ATOK%", config, function (content) {
@@ -140,7 +182,7 @@ function d7psu(config) {
 
     var output = xml(project, true);
 
-    fs.writeFile("./release.xml", output, function (err) {
+    fs.writeFile(config["path"] + "/" + config["file"], output, function (err) {
       if (err) {
         throw err;
       }
@@ -148,7 +190,7 @@ function d7psu(config) {
   });
 
   // Update *.info file.
-  if (!argv["noinfo"]) {
+  if (argv["info"]) {
     // XML File Path in Repo (should exist).
     d7psuGithubAPI("https://api.github.com/repos/%USER%/%REPO%/contents/release.xml?access_token=%ATOK%", config, function (content) {
       console.log(content);
@@ -156,7 +198,7 @@ function d7psu(config) {
       // example: https://api.github.com/repos/skullhole/d7psu/contents/release.xml
       if (content.download_url) {
         // Create info file if missing.
-        var info = "./" + d7psuPrepareString("%REPO%", config) + ".info", data;
+        var info = config["path"] + "/" + d7psuPrepareString("%REPO%", config) + ".info", data;
         try {
           data = fs.readFileSync(info);
           data = data.toString();
@@ -212,7 +254,12 @@ function d7psuPrepareString(string, config) {
  */
 function d7psuGithubAPI(url, config, callback) {
   var urlPrepared = d7psuPrepareString(url, config);
-  console.log(urlPrepared, config);
+  if (!config.atok) {
+    urlPrepared = urlPrepared
+      .replace('access_token=', '')
+      .replace('&&', '&')
+      .replace(/\?$/, '');
+  }
 
   fetchURL(urlPrepared, function (error, meta, body) {
     if (error) {
@@ -223,7 +270,7 @@ function d7psuGithubAPI(url, config, callback) {
 
       // Error.
       if (!content || content.message) {
-        console.log("Error: ", content);
+        console.log("Error: ", urlPrepared, content);
         return;
       }
 
