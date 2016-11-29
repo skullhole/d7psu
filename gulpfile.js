@@ -98,7 +98,7 @@ function d7psu(config) {
         release.push({"version_patch": match[2]});
         release.push({"status": "published"});
         release.push({"release_link": release_github.html_url});
-        release.push({"download_link": d7psuPrepareString(release_github.tarball_url + "?access_token=%ATOK%", config)});
+        release.push({"download_link": d7psuGithubAPIPrepareURL(release_github.tarball_url + "?access_token=%ATOK%", config)});
         release.push({"date": date});
         // release.push({ "mdhash" : "" });
         // release.push({ "filesize" : "" });
@@ -107,7 +107,7 @@ function d7psu(config) {
         var files = [];
 
         // ZIP.
-        filepath = d7psuPrepareString(release_github.zipball_url + "?access_token=%ATOK%", config);
+        filepath = d7psuGithubAPIPrepareURL(release_github.zipball_url + "?access_token=%ATOK%", config);
         fileinfo = d7psuFileStat(filepath);
         files.push({
           "file": [
@@ -120,7 +120,7 @@ function d7psu(config) {
         });
 
         // TAR.GZ.
-        filepath = d7psuPrepareString(release_github.tarball_url + "?access_token=%ATOK%", config);
+        filepath = d7psuGithubAPIPrepareURL(release_github.tarball_url + "?access_token=%ATOK%", config);
         fileinfo = d7psuFileStat(filepath);
         files.push({
           "file": [
@@ -193,8 +193,6 @@ function d7psu(config) {
   if (config["info"]) {
     // XML File Path in Repo (should exist).
     d7psuGithubAPI("https://api.github.com/repos/%USER%/%REPO%/contents/release.xml?access_token=%ATOK%", config, function (content) {
-      console.log(content);
-
       // example: https://api.github.com/repos/skullhole/d7psu/contents/release.xml
       if (content.download_url) {
         // Create info file if missing.
@@ -246,6 +244,24 @@ function d7psuPrepareString(string, config) {
 }
 
 /**
+ * Prepares Github API URL.
+ *
+ * @param url
+ * @param config
+ * @returns {XML}
+ */
+function d7psuGithubAPIPrepareURL(url, config) {
+  var urlPrepared = d7psuPrepareString(url, config);
+  if (!config.atok) {
+    urlPrepared = urlPrepared
+      .replace("access_token=", "")
+      .replace("&&", "&")
+      .replace(/\?$/, "");
+  }
+  return urlPrepared;
+}
+
+/**
  * Asyncronously accesses Github API and processes it using a callback.
  *
  * @param url
@@ -253,13 +269,7 @@ function d7psuPrepareString(string, config) {
  * @param callback
  */
 function d7psuGithubAPI(url, config, callback) {
-  var urlPrepared = d7psuPrepareString(url, config);
-  if (!config.atok) {
-    urlPrepared = urlPrepared
-      .replace('access_token=', '')
-      .replace('&&', '&')
-      .replace(/\?$/, '');
-  }
+  var urlPrepared = d7psuGithubAPIPrepareURL(url, config);
 
   fetchURL(urlPrepared, function (error, meta, body) {
     if (error) {
