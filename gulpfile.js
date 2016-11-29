@@ -190,7 +190,7 @@ function d7psu(config) {
   });
 
   // Update *.info file.
-  if (argv["info"]) {
+  if (config["info"]) {
     // XML File Path in Repo (should exist).
     d7psuGithubAPI("https://api.github.com/repos/%USER%/%REPO%/contents/release.xml?access_token=%ATOK%", config, function (content) {
       console.log(content);
