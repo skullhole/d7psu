@@ -32,7 +32,8 @@ gulp.task("default", function () {
     "info": "1",
     "path": ".",
     "file": "release.xml",
-    "conf": "repo.json"
+    "conf": "repo.json",
+    "suff": "1"
   };
   var config = extend({}, defaultConfig, argv);
 
@@ -213,6 +214,9 @@ function d7psu(config) {
         data += "\n";
         data += "project status url = ";
         data += content.download_url;
+        if (config["suff"]) {
+          data += config['atok'] ? "&" : "#";
+        }
         data = data.replace(/\n\nproject status url/, "\nproject status url");
 
         // Save info file.
